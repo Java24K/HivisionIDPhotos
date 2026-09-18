@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, Form, File
+import os
 from hivision import IDCreator
 from hivision.error import FaceError
 from hivision.creator.layout_calculator import (
@@ -38,6 +39,11 @@ app.add_middleware(
     ],  # 允许的请求方法，例如：GET, POST 等，也可以指定 ["GET", "POST"]
     allow_headers=["*"],  # 允许的请求头，也可以指定具体的头部
 )
+
+
+@app.get("/healthz")
+async def healthz():
+    return {"status": "ok"}
 
 
 # 证件照智能制作接口
@@ -369,5 +375,5 @@ async def idphoto_crop_inference(
 if __name__ == "__main__":
     import uvicorn
 
-    # 在8080端口运行推理服务
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    port = int(os.environ.get("PORT", "8080"))
+    uvicorn.run(app, host="0.0.0.0", port=port)
